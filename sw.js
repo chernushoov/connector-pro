@@ -2,14 +2,14 @@
 
 const CACHE_NAME = 'connector-v1';
 const ASSETS = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/l10n.js',
-    '/js/app.js',
-    '/manifest.json',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png'
+    './',
+    './index.html',
+    './css/style.css',
+    './js/l10n.js',
+    './js/app.js',
+    './manifest.json',
+    './icons/icon-192.svg',
+    './icons/icon-512.svg'
 ];
 
 // Install
@@ -37,9 +37,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     // Skip non-GET requests
     if (event.request.method !== 'GET') return;
-
-    // Skip external requests
-    if (!event.request.url.startsWith(self.location.origin)) return;
 
     event.respondWith(
         caches.match(event.request)
