@@ -1,6 +1,6 @@
 // Connector Pro - Service Worker
 
-const CACHE_NAME = 'connector-v3';
+const CACHE_NAME = 'connector-v4';
 const ASSETS = [
     './',
     './index.html',
