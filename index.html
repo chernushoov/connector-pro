@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#6B5CE7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Connector">
+    <meta name="description" content="Connector Pro - Работа найдётся для каждого">
+
+    <title>Connector Pro</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Screen -->
+        <div id="screen-auth" class="screen active">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="logo">
+                        <div class="logo-icon">C</div>
+                    </div>
+                    <h1 data-l10n="app.name">Connector</h1>
+                    <p class="tagline" data-l10n="app.tagline">Работа найдётся для каждого</p>
+                </div>
+
+                <div class="auth-box">
+                    <h2 data-l10n="auth.title">Подтвердите, что вы настоящий</h2>
+                    <p data-l10n="auth.sub">Иначе это станет фермой фейков</p>
+
+                    <div id="auth-step-phone" class="auth-step active">
+                        <input type="tel" id="phone-input" placeholder="+972" data-l10n-placeholder="auth.phone.placeholder">
+                        <button class="btn btn-primary" onclick="App.sendSMS()" data-l10n="auth.send">Отправить код</button>
+                    </div>
+
+                    <div id="auth-step-code" class="auth-step">
+                        <input type="text" id="code-input" maxlength="6" placeholder="000000" data-l10n-placeholder="auth.code.placeholder">
+                        <div id="debug-code" class="debug-code"></div>
+                        <button class="btn btn-primary" onclick="App.verifySMS()" data-l10n="auth.verify">Подтвердить</button>
+                        <button class="btn btn-text" onclick="App.backToPhone()" data-l10n="auth.back">← Назад</button>
+                    </div>
+
+                    <div id="auth-error" class="error-msg"></div>
+                </div>
+
+                <div class="powered" data-l10n="powered">Powered by FloorDSGN • Connector Pro</div>
+            </div>
+
+            <div class="lang-selector">
+                <button onclick="App.setLang('ru')" class="lang-btn" data-lang="ru">RU</button>
+                <button onclick="App.setLang('he')" class="lang-btn" data-lang="he">HE</button>
+                <button onclick="App.setLang('en')" class="lang-btn" data-lang="en">EN</button>
+                <button onclick="App.setLang('ar')" class="lang-btn" data-lang="ar">AR</button>
+            </div>
+        </div>
+
+        <!-- Role Selection Screen -->
+        <div id="screen-role" class="screen">
+            <div class="role-container">
+                <h1 data-l10n="role.title">Кто вы?</h1>
+
+                <div class="role-cards">
+                    <div class="role-card" onclick="App.selectRole('worker')">
+                        <div class="role-icon">👷</div>
+                        <h3 data-l10n="role.worker">Ищу работу</h3>
+                    </div>
+
+                    <div class="role-card" onclick="App.selectRole('employer')">
+                        <div class="role-icon">🏢</div>
+                        <h3 data-l10n="role.employer">Ищу работника</h3>
+                    </div>
+                </div>
+
+                <button class="btn btn-text logout-btn" onclick="App.logout()" data-l10n="logout">Выйти</button>
+            </div>
+
+            <div class="lang-selector">
+                <button onclick="App.setLang('ru')" class="lang-btn" data-lang="ru">RU</button>
+                <button onclick="App.setLang('he')" class="lang-btn" data-lang="he">HE</button>
+                <button onclick="App.setLang('en')" class="lang-btn" data-lang="en">EN</button>
+                <button onclick="App.setLang('ar')" class="lang-btn" data-lang="ar">AR</button>
+            </div>
+        </div>
+
+        <!-- Worker Profile Form -->
+        <div id="screen-worker-form" class="screen">
+            <div class="form-container">
+                <h1 data-l10n="profile.mandatory.title">Заполните анкету</h1>
+                <p data-l10n="profile.mandatory.sub">1–2 минуты. Так вас будут звать на смены.</p>
+
+                <form id="worker-form" onsubmit="App.saveWorkerProfile(event)">
+                    <input type="text" id="worker-name" required data-l10n-placeholder="profile.worker.name" placeholder="Имя и фамилия">
+                    <input type="tel" id="worker-phone" required data-l10n-placeholder="profile.worker.phone" placeholder="Телефон">
+
+                    <div class="form-row">
+                        <input type="text" id="worker-age" data-l10n-placeholder="profile.worker.age" placeholder="Возраст">
+                        <input type="text" id="worker-city" required data-l10n-placeholder="profile.worker.city" placeholder="Город">
+                    </div>
+
+                    <input type="text" id="worker-spec" required data-l10n-placeholder="profile.worker.spec" placeholder="Специализация">
+
+                    <div class="form-row">
+                        <input type="text" id="worker-exp" data-l10n-placeholder="profile.worker.exp" placeholder="Опыт (лет)">
+                        <input type="text" id="worker-rate" data-l10n-placeholder="profile.worker.rate" placeholder="Ставка ₪/ч">
+                    </div>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="worker-car">
+                        <span data-l10n="profile.worker.car">Есть автомобиль</span>
+                    </label>
+
+                    <textarea id="worker-about" rows="3" data-l10n-placeholder="profile.worker.about" placeholder="О себе"></textarea>
+
+                    <button type="submit" class="btn btn-primary" data-l10n="profile.worker.submit">Создать профиль</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Worker Main App -->
+        <div id="screen-worker-app" class="screen">
+            <div class="app-header">
+                <button class="back-btn" onclick="App.goToRole()">←</button>
+                <h1 data-l10n="tabs.shifts">Смены</h1>
+                <div class="header-actions">
+                    <button onclick="App.showGuide()" class="icon-btn">?</button>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="search-input" data-l10n-placeholder="search.placeholder" placeholder="Поиск: работа / город / компания" oninput="App.filterShifts()">
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all" onclick="App.setFilter('all')" data-l10n="filters.all">Все</button>
+                <button class="filter-btn" data-filter="today" onclick="App.setFilter('today')" data-l10n="filters.today">Сегодня</button>
+                <button class="filter-btn" data-filter="tomorrow" onclick="App.setFilter('tomorrow')" data-l10n="filters.tomorrow">Завтра</button>
+                <button class="filter-btn" data-filter="instant" onclick="App.setFilter('instant')" data-l10n="filters.instant">Instant</button>
+            </div>
+
+            <div id="shifts-list" class="shifts-list">
+                <!-- Shifts will be rendered here -->
+            </div>
+
+            <nav class="tab-bar">
+                <button class="tab active" data-tab="shifts" onclick="App.switchTab('shifts')">
+                    <span class="tab-icon">📋</span>
+                    <span data-l10n="tabs.shifts">Смены</span>
+                </button>
+                <button class="tab" data-tab="tasks" onclick="App.switchTab('tasks')">
+                    <span class="tab-icon">✓</span>
+                    <span data-l10n="taskflow.title">Задачи</span>
+                </button>
+                <button class="tab" data-tab="profile" onclick="App.switchTab('profile')">
+                    <span class="tab-icon">👤</span>
+                    <span data-l10n="tabs.profile">Профиль</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Shift Detail Modal -->
+        <div id="modal-shift" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="shift-detail-title"></h2>
+                    <button class="close-btn" onclick="App.closeModal('shift')">&times;</button>
+                </div>
+                <div id="shift-detail-content" class="modal-body">
+                    <!-- Shift details will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Tab Content -->
+        <div id="screen-tasks" class="screen">
+            <div class="app-header">
+                <button class="back-btn" onclick="App.goToRole()">←</button>
+                <h1 data-l10n="taskflow.title">Мои задачи</h1>
+            </div>
+
+            <div id="tasks-list" class="tasks-list">
+                <!-- Tasks will be rendered here -->
+            </div>
+
+            <nav class="tab-bar">
+                <button class="tab" data-tab="shifts" onclick="App.switchTab('shifts')">
+                    <span class="tab-icon">📋</span>
+                    <span data-l10n="tabs.shifts">Смены</span>
+                </button>
+                <button class="tab active" data-tab="tasks" onclick="App.switchTab('tasks')">
+                    <span class="tab-icon">✓</span>
+                    <span data-l10n="taskflow.title">Задачи</span>
+                </button>
+                <button class="tab" data-tab="profile" onclick="App.switchTab('profile')">
+                    <span class="tab-icon">👤</span>
+                    <span data-l10n="tabs.profile">Профиль</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Profile Tab Content -->
+        <div id="screen-profile" class="screen">
+            <div class="app-header">
+                <button class="back-btn" onclick="App.goToRole()">←</button>
+                <h1 data-l10n="tabs.profile">Профиль</h1>
+                <div class="header-actions">
+                    <button onclick="App.editProfile()" class="icon-btn">✏️</button>
+                </div>
+            </div>
+
+            <div id="profile-content" class="profile-content">
+                <!-- Profile will be rendered here -->
+            </div>
+
+            <nav class="tab-bar">
+                <button class="tab" data-tab="shifts" onclick="App.switchTab('shifts')">
+                    <span class="tab-icon">📋</span>
+                    <span data-l10n="tabs.shifts">Смены</span>
+                </button>
+                <button class="tab" data-tab="tasks" onclick="App.switchTab('tasks')">
+                    <span class="tab-icon">✓</span>
+                    <span data-l10n="taskflow.title">Задачи</span>
+                </button>
+                <button class="tab active" data-tab="profile" onclick="App.switchTab('profile')">
+                    <span class="tab-icon">👤</span>
+                    <span data-l10n="tabs.profile">Профиль</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Employer Profile Form -->
+        <div id="screen-employer-form" class="screen">
+            <div class="form-container">
+                <h1 data-l10n="employer.mandatory.title">Анкета работодателя</h1>
+                <p data-l10n="employer.mandatory.sub">Честно и прозрачно.</p>
+
+                <form id="employer-form" onsubmit="App.saveEmployerProfile(event)">
+                    <input type="text" id="employer-company" required data-l10n-placeholder="employer.company" placeholder="Компания">
+                    <input type="text" id="employer-name" required data-l10n-placeholder="employer.contact" placeholder="Контактное лицо">
+                    <input type="tel" id="employer-phone" required data-l10n-placeholder="employer.phone" placeholder="Телефон">
+                    <input type="text" id="employer-city" required data-l10n-placeholder="employer.city" placeholder="Город">
+                    <input type="text" id="employer-industry" data-l10n-placeholder="employer.industry" placeholder="Сфера">
+
+                    <button type="submit" class="btn btn-primary" data-l10n="employer.submit">Создать кабинет</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Employer Main App -->
+        <div id="screen-employer-app" class="screen">
+            <div class="app-header">
+                <button class="back-btn" onclick="App.goToRole()">←</button>
+                <h1 data-l10n="tabs.dashboard">Панель</h1>
+                <div class="header-actions">
+                    <button onclick="App.showGuide()" class="icon-btn">?</button>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="card">
+                    <h3 data-l10n="dashboard.title">Панель</h3>
+                    <p data-l10n="dashboard.subtitle">Публикуйте смены и выбирайте людей</p>
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="App.showCreateShift()">
+                    <span data-l10n="dashboard.create.shift">+ Создать смену</span>
+                </button>
+
+                <div id="employer-shifts" class="shifts-list">
+                    <!-- Employer's shifts will be rendered here -->
+                </div>
+
+                <div id="applications-section" class="card">
+                    <h3 data-l10n="dashboard.applications">Входящие отклики</h3>
+                    <div id="applications-list">
+                        <!-- Applications will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <nav class="tab-bar">
+                <button class="tab active" data-tab="dashboard" onclick="App.switchEmployerTab('dashboard')">
+                    <span class="tab-icon">📊</span>
+                    <span data-l10n="tabs.dashboard">Панель</span>
+                </button>
+                <button class="tab" data-tab="emp-tasks" onclick="App.switchEmployerTab('emp-tasks')">
+                    <span class="tab-icon">✓</span>
+                    <span data-l10n="taskflow.title">Задачи</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Create Shift Modal -->
+        <div id="modal-create-shift" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-l10n="create.shift.title">Создать смену</h2>
+                    <button class="close-btn" onclick="App.closeModal('create-shift')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-shift-form" onsubmit="App.createShift(event)">
+                        <input type="text" id="shift-title" required data-l10n-placeholder="create.shift.job.placeholder" placeholder="Название работы">
+
+                        <div class="form-row">
+                            <input type="date" id="shift-date" required>
+                            <input type="time" id="shift-start" required value="09:00">
+                            <input type="time" id="shift-end" required value="17:00">
+                        </div>
+
+                        <div class="form-row">
+                            <input type="number" id="shift-rate" required placeholder="₪/час" value="50">
+                            <input type="number" id="shift-slots" required placeholder="Мест" value="1">
+                        </div>
+
+                        <input type="text" id="shift-city" required data-l10n-placeholder="create.shift.city.placeholder" placeholder="Город">
+
+                        <textarea id="shift-requirements" rows="2" data-l10n-placeholder="create.shift.requirements.placeholder" placeholder="Требования"></textarea>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="shift-instant">
+                            <span data-l10n="create.shift.instant">Срочная смена (Instant)</span>
+                        </label>
+
+                        <button type="submit" class="btn btn-primary" data-l10n="create.shift.publish">Опубликовать</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guide Modal -->
+        <div id="modal-guide" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-l10n="guide.title">Мини-обучение</h2>
+                    <button class="close-btn" onclick="App.closeModal('guide')">&times;</button>
+                </div>
+                <div class="modal-body guide-content">
+                    <p data-l10n="guide.sub">Сделано так, чтобы вы быстрее начали зарабатывать.</p>
+
+                    <h4 data-l10n="guide.section.core">Ключевая идея</h4>
+                    <p data-l10n="guide.core">Профиль → отклик → контакт → смена. Без бюрократии.</p>
+
+                    <h4 data-l10n="guide.section.worker">Для работников</h4>
+                    <ul>
+                        <li data-l10n="guide.worker.1">Заполните профиль</li>
+                        <li data-l10n="guide.worker.2">Включите Instant для срочных смен</li>
+                        <li data-l10n="guide.worker.3">Пишите в WhatsApp по кнопке</li>
+                    </ul>
+
+                    <button class="btn btn-primary" onclick="App.closeModal('guide')" data-l10n="guide.done">Понял</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/l10n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
