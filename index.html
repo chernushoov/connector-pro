@@ -368,6 +368,13 @@
     <script src="./js/app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
+            // Force update: unregister old SW, clear caches, then register new
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(reg => reg.unregister());
+            });
+            caches.keys().then(keys => {
+                keys.forEach(key => caches.delete(key));
+            });
             navigator.serviceWorker.register('./sw.js');
         }
     </script>
