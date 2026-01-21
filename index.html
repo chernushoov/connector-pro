@@ -225,10 +225,10 @@
         .input {
             width: 100%;
             padding: 16px 20px;
-            background: var(--surface);
-            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 14px;
-            color: var(--text);
+            color: #ffffff;
             font-size: 16px;
             font-family: inherit;
             transition: all 0.3s ease;
@@ -295,11 +295,11 @@
         }
 
         .auth-step {
-            display: none;
+            display: none !important;
         }
 
         .auth-step.active {
-            display: block;
+            display: block !important;
             animation: fadeIn 0.4s ease;
         }
 
@@ -1134,7 +1134,7 @@
                     </div>
                     <h1 class="brand-name">Connector</h1>
                     <p class="brand-tagline">Работа найдётся для каждого</p>
-                    <p style="color: #6366f1; font-size: 10px; margin-top: 8px;">v2.0</p>
+                    <p style="color: #6366f1; font-size: 10px; margin-top: 8px;">v2.1</p>
                 </div>
 
                 <div class="glass-card">
